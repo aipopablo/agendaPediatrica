@@ -53,7 +53,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             // ...
         }*/
 
-
         if(view.getId() == R.id.sign_in_button){
             signIn();
 
@@ -104,7 +103,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -114,6 +112,5 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-
     }
 }
