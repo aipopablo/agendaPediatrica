@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -22,6 +24,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
+
+    //private SignInButton signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +50,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onClick(View view) {
-        /*switch (v.getId()) {
-            case R.id.sign_in_button:
-                signIn();
-                break;
-            // ...
-        }*/
-
-        if(view.getId() == R.id.sign_in_button){
             signIn();
-
-        }
 
     }
 
@@ -78,19 +72,23 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        //Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+
+            goMainScreen();
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 
-            updateUI(true);
+            //updateUI(true);
         } else {
+
+            Toast.makeText(this, R.string.not_log_in, Toast.LENGTH_SHORT).show();
             // Signed out, show unauthenticated UI.
-            updateUI(false);
+            //updateUI(false);
         }
     }
-
+    /*
     private void updateUI(boolean signedIn) {
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
@@ -102,7 +100,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
     }
-
+    */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 

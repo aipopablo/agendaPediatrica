@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Agenda Pediatrica Nuevo</string>
+    <string name="not_log_in">No se puede iniciar sesión</string>
 </resources>
