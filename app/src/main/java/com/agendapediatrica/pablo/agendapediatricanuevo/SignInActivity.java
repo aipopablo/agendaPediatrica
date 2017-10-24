@@ -25,6 +25,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
 
+    private String nombre;
+
     //private SignInButton signInButton;
 
     @Override
@@ -76,6 +78,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+
+            nombre = acct.getEmail();
+
+
 
             goMainScreen();
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));

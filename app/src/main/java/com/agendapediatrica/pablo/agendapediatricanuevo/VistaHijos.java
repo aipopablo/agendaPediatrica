@@ -62,6 +62,7 @@ public class VistaHijos extends AppCompatActivity implements GoogleApiClient.OnC
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()){
 
+
         } else {
             goLogInScreen();
         }
