@@ -1,10 +1,10 @@
 package com.agendapediatrica.pablo.agendapediatricanuevo;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,18 +14,32 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+//para los objetos JSon
+import org.json.JSONObject;
+import org.json.JSONException;
+
+import cz.msebera.android.httpclient.client.methods.HttpTrace;
+import devazt.devazt.networking.HttpClient;
+import devazt.devazt.networking.OnHttpRequestComplete;
+import devazt.devazt.networking.Response;
+
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
-    
+    private static final String SERVER = "192.168.1.60";
+    private static final String PORT = ":8080";
+
+    private static final String POST_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitencia.usuario/validar";
+
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
 
-    private String nombre;
+    private String url;
+    private String correo;
 
     //private SignInButton signInButton;
 
@@ -69,19 +83,24 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
+            try {
+                handleSignInResult(result);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void handleSignInResult(GoogleSignInResult result) {
+    private void handleSignInResult(GoogleSignInResult result) throws JSONException {
         //Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
 
-            nombre = acct.getEmail();
+            //traemos el correo del usuario
+            correo = acct.getEmail();
 
-
+            validarUsuario(correo);
 
             goMainScreen();
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
@@ -117,4 +136,64 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+
+    public  void  validarUsuario (String correo){
+        try {
+            //creamos el objeto JSon donde almacenamos el correo
+            JSONObject json_correo = new JSONObject();
+
+            //finalmente, almacenamos el correo
+            json_correo.put("correo", correo);
+
+            AsyncTaskUsuario task = new AsyncTaskUsuario();
+
+            url = SERVER + PORT + POST_VALIDAR_USUARIO;
+
+            task.execute(url);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class AsyncTaskUsuario extends AsyncTask<String, String, Object> {
+        @Override
+        protected Void doInBackground(String... params) {
+
+            HttpClient client = new HttpClient(new OnHttpRequestComplete() {
+                @Override
+                public void onComplete(Response status) {
+                    if(status.isSuccess()){
+
+                    }
+                    else{
+
+                    }
+
+                }
+            });
+
+            client.excecute(params[0]);
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+        }
+
+        //String content = HttpManager.getData(params[0]);
+            //return content;
+
+
+    }
+
+
 }

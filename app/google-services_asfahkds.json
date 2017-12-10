@@ -1,0 +1,95 @@
+{
+  "project_info": {
+    "project_number": "293324470546",
+    "project_id": "firebase-agenda-pediatrica"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293324470546:android:27d689d63f1b7a06",
+        "android_client_info": {
+          "package_name": "com.google.samples.quickstart.signin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293324470546-3qmslevvo11kc5e8sd4apjgvkpv5cf6l.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "293324470546-4rgonklg0u0tfgab27n35kmdt2beo0a6.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "293324470546-44e1p0lj8htqoeaoi32bvs6m11otgguc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.google.samples.quickstart.signin",
+            "certificate_hash": "a8502ff5edba8ef7b34f40c5a237ca00240c9d4f"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZvjsXa9mXTaoHLUD5BGem6FVyew-9dik"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293324470546:android:f9bcc472f9196103",
+        "android_client_info": {
+          "package_name": "com.agendapediatrica.pablo.agendapediatrica"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293324470546-maq7sl9gmhrg8r86cbn8gtl8kpd2akut.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.agendapediatrica.pablo.agendapediatrica",
+            "certificate_hash": "a8502ff5edba8ef7b34f40c5a237ca00240c9d4f"
+          }
+        },
+        {
+          "client_id": "293324470546-3qmslevvo11kc5e8sd4apjgvkpv5cf6l.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "293324470546-4rgonklg0u0tfgab27n35kmdt2beo0a6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZvjsXa9mXTaoHLUD5BGem6FVyew-9dik"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "187437159256",
+    "project_id": "agenda-pediatrica-nuevo"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187437159256:android:7e3afdf70c55d2f1",
+        "android_client_info": {
+          "package_name": "com.agendapediatrica.pablo.agendapediatricanuevo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "187437159256-dnqfhu7rf1ocf8rojmoea7ft70h5fpk5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.agendapediatrica.pablo.agendapediatricanuevo",
+            "certificate_hash": "a8502ff5edba8ef7b34f40c5a237ca00240c9d4f"
+          }
+        },
+        {
+          "client_id": "187437159256-pgkf1afki3gfoegtja7cn9eb7l7ucehn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBN6ovSUa87FUGAOD3zwNwrpE7n1TLCIRU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
