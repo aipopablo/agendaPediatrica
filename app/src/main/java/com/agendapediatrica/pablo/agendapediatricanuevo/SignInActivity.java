@@ -15,6 +15,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -32,7 +34,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
-    private static final String SERVER = "192.168.1.60";
+    //esta es la ip en casa
+    //private static final String SERVER = "192.168.1.60";
+    //esta es la ip en la ofi
+    private static final String SERVER = "192.168.2.117";
     private static final String PORT = ":8080";
 
     private static final String POST_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitencia.usuario/validar";
@@ -69,6 +74,24 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (opr.isDone()){
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
+    }
+
+    @Override
     public void onClick(View view) {
             signIn();
 
@@ -89,13 +112,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             try {
                 handleSignInResult(result);
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void handleSignInResult(GoogleSignInResult result) throws JSONException {
+    private void handleSignInResult(GoogleSignInResult result) {
         //Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.

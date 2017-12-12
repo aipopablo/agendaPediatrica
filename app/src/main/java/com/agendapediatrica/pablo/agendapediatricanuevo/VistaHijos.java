@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -14,6 +15,24 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 
 public class VistaHijos extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+
+    private static final int INTERVALO = 2000; //2 segundos para salir
+    private long tiempoPrimerClick;
+
+    //esto es para cerrar la app cuando le damos dos clicks a 'volver'
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if (tiempoPrimerClick + INTERVALO > System.currentTimeMillis()){
+            super.onBackPressed();
+            return;
+        }else {
+            Toast.makeText(this, "Vuelve a presionar para salir", Toast.LENGTH_SHORT).show();
+        }
+        tiempoPrimerClick = System.currentTimeMillis();
+
+    }
 
     private GoogleApiClient googleApiClient;
 
