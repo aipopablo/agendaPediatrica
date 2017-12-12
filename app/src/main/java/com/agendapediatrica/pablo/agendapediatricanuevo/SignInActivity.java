@@ -15,15 +15,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 //para los objetos JSon
-import org.json.JSONObject;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import cz.msebera.android.httpclient.client.methods.HttpTrace;
 import devazt.devazt.networking.HttpClient;
 import devazt.devazt.networking.OnHttpRequestComplete;
 import devazt.devazt.networking.Response;
+import models.Usuario;
 
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -34,6 +36,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private static final String PORT = ":8080";
 
     private static final String POST_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitencia.usuario/validar";
+    private static final String GET_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitencia.usuario/validar/";
+
 
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
@@ -137,46 +141,42 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         startActivity(intent);
     }
 
+    /*
+    * en esta funcion hacemos las operaciones correspondientes a la validación
+    * del iusuario
+    * */
     public  void  validarUsuario (String correo){
-        try {
-            //creamos el objeto JSon donde almacenamos el correo
-            JSONObject json_correo = new JSONObject();
-
-            //finalmente, almacenamos el correo
-            json_correo.put("correo", correo);
-
             AsyncTaskUsuario task = new AsyncTaskUsuario();
 
-            url = SERVER + PORT + POST_VALIDAR_USUARIO;
+            url = SERVER + PORT + GET_VALIDAR_USUARIO + correo ;
 
             task.execute(url);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
-    private class AsyncTaskUsuario extends AsyncTask<String, String, Object> {
+    private class AsyncTaskUsuario extends AsyncTask<String, String, String> {
         @Override
-        protected Void doInBackground(String... params) {
+        protected String doInBackground(String... params) {
 
             HttpClient client = new HttpClient(new OnHttpRequestComplete() {
                 @Override
-                public void onComplete(Response status) {
+                public String onComplete(Response status) {
+                    String result = "";
                     if(status.isSuccess()){
+
+                        result = status.getResult();
 
                     }
                     else{
 
                     }
 
+                    return result;
                 }
             });
 
             client.excecute(params[0]);
 
-            return null;
+            return "";
         }
 
         @Override
@@ -185,13 +185,28 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         @Override
-        protected void onPostExecute(Object o) {
+        protected void onPostExecute(String o) {
             super.onPostExecute(o);
+
+            if (o == null){
+                //progress.dismiss();
+                Toast.makeText(getApplicationContext(), "El usuario no esta registrado en la base de datos!", Toast.LENGTH_SHORT).show();
+            }else{
+                try {
+                    //creamos el chirimbolo del JSon
+                    Gson gson = new GsonBuilder().create();
+
+                    JSONObject jsonobj = new JSONObject(o);
+
+                    //Deserializamos el objeto para validar
+                    Usuario usu = gson.fromJson(o, Usuario.class);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
         }
-
-        //String content = HttpManager.getData(params[0]);
-            //return content;
-
 
     }
 

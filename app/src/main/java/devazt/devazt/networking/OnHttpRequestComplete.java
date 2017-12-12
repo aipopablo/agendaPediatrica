@@ -10,6 +10,6 @@ public interface OnHttpRequestComplete {
          * devuelve un Response, con los datos de la solicitud
          * @param status Instancia de la clase Response
          */
-        public void onComplete(Response status);
+        public String onComplete(Response status);
 
 }
