@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.agendapediatrica.pablo.agendapediatricanuevo.Filtros">
+
+    <TextView
+        android:id="@+id/txtOrdenar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ordenar por:"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="18dp"
+        android:layout_marginTop="20dp"/>
+
+    <Spinner
+        android:id="@+id/spinnerCombo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        >
+    </Spinner>
+
+    <TextView
+        android:id="@+id/txtFormaOrden"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="De forma:"
+        android:gravity="center"
+        android:textColor="#000000"
+        android:textSize="18dp"
+        android:layout_marginTop="80dp"/>
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="25dp"
+        android:checkedButton="@+id/radioAsc">
+
+        <RadioButton
+            android:id="@+id/radioAsc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ascendente"/>
+
+        <RadioButton
+            android:id="@+id/radioDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descendente"
+            android:layout_marginLeft="5dp"/>
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp">
+
+        <Button
+            android:id="@+id/btnAplicarFiltro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aplicar"
+            android:gravity="center"
+            android:layout_marginRight="15dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#ffffff"/>
+
+        <Button
+            android:id="@+id/btnCancelarFiltro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancelar"
+            android:gravity="center"
+            android:layout_marginLeft="15dp"
+            android:background="@color/colorPrimary"
+            android:textColor="#ffffff"/>
+
+    </LinearLayout>
+
+</LinearLayout>

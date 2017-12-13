@@ -36,19 +36,23 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private static final int RC_SIGN_IN = 9001;
     //esta es la ip en casa
     //private static final String SERVER = "192.168.1.60";
-    //esta es la ip en la ofi
-    private static final String SERVER = "192.168.2.117";
-    private static final String PORT = ":8080";
+    //esta es la ip en lo de pao
+    public static final String SERVER = "192.168.1.13";
+    public static final String PORT = ":8080";
 
-    private static final String POST_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitencia.usuario/validar";
-    private static final String GET_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitencia.usuario/validar/";
-
+    public static final String POST_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitenceusuario.usuario/validar";
+    public static final String GET_HIJOS_USUARIO = "/AgendaPediatricaNuevo/webresources/persitencehijo.hijo/validar/";
+    public static final String GET_VACUNAS_HIJO = "/AgendaPediatricaNuevo/webresources/persitencevacuna./validar/";
+    public static final String GET_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitence.usuario/validar/";
+    public static final int notificacionID = 123;
 
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
 
     private String url;
     private String correo;
+
+    public Usuario user = new Usuario();
 
     //private SignInButton signInButton;
 
@@ -129,7 +133,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
             validarUsuario(correo);
 
-            goMainScreen();
             //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 
             //updateUI(true);
@@ -140,26 +143,15 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             //updateUI(false);
         }
     }
-    /*
-    private void updateUI(boolean signedIn) {
-        if (signedIn) {
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
-        } else {
-            //mStatusTextView.setText(R.string.signed_out);
 
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            //findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
-        }
-    }
-    */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
-    private void goMainScreen(){
+    private void ListadoHijos(String usu){
         Intent intent = new Intent(this, VistaHijos.class);
+        intent.putExtra("UsuarioCadenaJson", usu);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
@@ -169,32 +161,28 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     * del iusuario
     * */
     public  void  validarUsuario (String correo){
-            AsyncTaskUsuario task = new AsyncTaskUsuario();
+        AsyncTaskUsuario task = new AsyncTaskUsuario();
 
-            url = SERVER + PORT + GET_VALIDAR_USUARIO + correo ;
+        url = "http://"+ SERVER + PORT + GET_VALIDAR_USUARIO + correo ;
 
-            task.execute(url);
+        task.execute(url);
     }
 
-    private class AsyncTaskUsuario extends AsyncTask<String, String, String> {
+    public class AsyncTaskUsuario extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
+            android.os.Debug.waitForDebugger();
 
             HttpClient client = new HttpClient(new OnHttpRequestComplete() {
                 @Override
                 public String onComplete(Response status) {
-                    String result = "";
-                    if(status.isSuccess()){
-
-                        result = status.getResult();
-
-                    }
-                    else{
-
-                    }
-
-                    return result;
+                String result = "";
+                if(status.isSuccess()){
+                    result = status.getResult();
                 }
+
+                return result;
+            }
             });
 
             client.excecute(params[0]);
@@ -221,8 +209,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
                     JSONObject jsonobj = new JSONObject(o);
 
-                    //Deserializamos el objeto para validar
-                    Usuario usu = gson.fromJson(o, Usuario.class);
+                    user.setIdUsuario(jsonobj.getInt("id"));
+                    user.setNombreUsuario(jsonobj.getString("nombre"));
+                    user.setEmailUsuario(jsonobj.getString("correo"));
+
+                    ListadoHijos(o);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

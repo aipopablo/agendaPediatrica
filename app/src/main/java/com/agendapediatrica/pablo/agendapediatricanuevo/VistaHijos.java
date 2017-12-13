@@ -1,9 +1,21 @@
 package com.agendapediatrica.pablo.agendapediatricanuevo;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -14,41 +26,125 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import adaptadores.HijosAdapter;
+import devazt.devazt.networking.HttpClient;
+import devazt.devazt.networking.OnHttpRequestComplete;
+import devazt.devazt.networking.Response;
+import jsonparser.HijosJSONparser;
+import models.Hijo;
+import models.Usuario;
+
+import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.GET_HIJOS_USUARIO;
+import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.PORT;
+import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.SERVER;
+import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.notificacionID;
+
 public class VistaHijos extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final int INTERVALO = 2000; //2 segundos para salir
     private long tiempoPrimerClick;
 
-    //esto es para cerrar la app cuando le damos dos clicks a 'volver'
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        if (tiempoPrimerClick + INTERVALO > System.currentTimeMillis()){
-            super.onBackPressed();
-            return;
-        }else {
-            Toast.makeText(this, "Vuelve a presionar para salir", Toast.LENGTH_SHORT).show();
-        }
-        tiempoPrimerClick = System.currentTimeMillis();
-
-    }
-
-    private GoogleApiClient googleApiClient;
+    Usuario usuario;//PADRE
+    String usuarioStringJSON;
+    List<Hijo> hijosList;
+    HijosAdapter hijosAdapter;
+    ListView listViewHijos;
+    Button btnCerrarSesin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vista_hijos);
+        btnCerrarSesin = (Button)findViewById(R.id.btnCerrarSesion);
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-                .requestEmail()
-                .build();
+        try {
 
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API)
-                .build();
+            usuarioStringJSON = getIntent().getStringExtra("usuarioStringJSON");
+
+            JSONObject jsonObject = new JSONObject(usuarioStringJSON);//jsonArray.getJSONObject(i);
+            Usuario user = new Usuario();
+
+            user.setIdUsuario(jsonObject.getInt("id"));
+            user.setNombreUsuario(jsonObject.getString("nombre"));
+            user.setEmailUsuario(jsonObject.getString("correo"));
+
+        } catch (Exception e) {
+
+        }
+
+
+        listViewHijos= (ListView)findViewById(R.id.listViewHijos);
+
+        hijosList = new ArrayList<>();
+
+        validarHijos(usuario.getIdUsuario());
+
+        listViewHijos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Toast.makeText(getApplicationContext(), "Clic Hijos", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Pos: "+position+" . Id:"+hijosList.get(position).getId(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), VistaVacunas.class);
+                intent.putExtra("idHijo", hijosList.get(position).getId());
+                intent.putExtra("nombreHijo", hijosList.get(position).getNombre());
+                startActivity(intent);
+            }
+        });
+
+        btnCerrarSesin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goLogInScreen();
+            }
+        });
+    }
+
+    private void goLogInScreen(){
+        Intent intent = new Intent(this, SignInActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    public void validarHijos(int idPadre){
+        pedirDatosHijos("http://"+ SERVER +PORT+GET_HIJOS_USUARIO+idPadre);
+    };
+
+    public void mostrarLista (Context context, List<Hijo> ListHijos){
+        hijosAdapter = new HijosAdapter(ListHijos, context);
+        listViewHijos.setAdapter(hijosAdapter);
+    }
+
+    public void pedirDatosHijos(String uri){
+        AsynTaskHijos task = new AsynTaskHijos();
+        task.execute(uri);
+    }
+
+    public boolean isOnLine(){
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnectedOrConnecting()){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void enviarNotificacion(String titulo, String vacuna){
+        NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                //.setSmallIcon(R.drawable.vacuna_image)
+                .setContentTitle(titulo)
+                .setContentText(vacuna)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        manager.notify(notificacionID, mBuilder.build());
     }
 
     @Override
@@ -56,45 +152,57 @@ public class VistaHijos extends AppCompatActivity implements GoogleApiClient.OnC
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private class AsynTaskHijos extends AsyncTask<String, String, String> {
 
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
-        if (opr.isDone()){
-            GoogleSignInResult result = opr.get();
-            handleSignInResult(result);
+        @Override
+        protected String doInBackground(String... params) {
+            //String content = HttpManager.getData(params[0]);
+            //return content;
 
-        } else {
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+            android.os.Debug.waitForDebugger();
+
+            HttpClient client = new HttpClient(new OnHttpRequestComplete() {
                 @Override
-                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
-                    handleSignInResult(googleSignInResult);
+                public String onComplete(Response status) {
+                    String result = "";
+                    if(status.isSuccess()){
+                        result = status.getResult();
+                    }
 
+                    return result;
                 }
             });
 
-        }
-    }
+            client.excecute(params[0]);
 
-    private void handleSignInResult(GoogleSignInResult result) {
-        if (result.isSuccess()){
-
-
-        } else {
-            goLogInScreen();
+            return "";
         }
 
-
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (s == null){
+                Log.e("Error:", "Nulo");
+                //Toast.makeText(getApplicationContext(), "Retorno Nulo OnPostExecute!", Toast.LENGTH_SHORT).show();
+            }else{
+                hijosList = HijosJSONparser.parse(s);
+                if (hijosList.isEmpty()){
+                    Toast.makeText(getApplicationContext(), "No se han encontrado hijos/as!", Toast.LENGTH_SHORT).show();
+                        /*Intent intent = new Intent(getApplicationContext(), ListaHijos.class);
+                        intent.putExtra("usuarioStringJSON", s);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);*/
+                }else{
+                    mostrarLista(getApplication(), hijosList);
+                }
+            }
+        }
     }
-
-    private void goLogInScreen() {
-        Intent intent = new Intent(this, SignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
 
 
 }
