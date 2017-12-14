@@ -27,8 +27,11 @@ import org.json.JSONObject;
 import devazt.devazt.networking.HttpClient;
 import devazt.devazt.networking.OnHttpRequestComplete;
 import devazt.devazt.networking.Response;
+import jsonparser.UsuarioJSONparser;
 import models.Usuario;
 import util.HttpGestor;
+
+import static android.R.id.progress;
 
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -52,6 +55,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private String url;
     private String correo;
+
+    Usuario thisUsuario;
 
     public Usuario user = new Usuario();
 
@@ -134,9 +139,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
             validarUsuario(correo);
 
-            //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-
-            //updateUI(true);
         } else {
 
             Toast.makeText(this, R.string.not_log_in, Toast.LENGTH_SHORT).show();
@@ -150,12 +152,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     }
 
-    private void ListadoHijos(String usu){
-        Intent intent = new Intent(this, VistaHijos.class);
-        intent.putExtra("UsuarioCadenaJson", usu);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
+
 
     /*
     * en esta funcion hacemos las operaciones correspondientes a la validación
@@ -169,36 +166,26 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         task.execute(url);
     }
 
-    public class AsyncTaskUsuario extends AsyncTask<String, String, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            android.os.Debug.waitForDebugger();
+    private void ListadoHijos(String usu){
+        Intent intent = new Intent(this, VistaHijos.class);
+        intent.putExtra("UsuarioCadenaJson", usu);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
 
-            String usu = HttpGestor.getData(params[0]);
-            return usu;
 
-            /* probaremos de otra manera
-            HttpClient client = new HttpClient(new OnHttpRequestComplete() {
-                @Override
-                public String onComplete(Response status) {
-                String result = "";
-                if(status.isSuccess()){
-                    result = status.getResult();
-                }
 
-                return result;
-            }
-            });
 
-            client.excecute(params[0]);
-
-            return "";
-            */
-        }
-
+    private class AsyncTaskUsuario extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String usu = HttpGestor.getData(params[0]);
+            return usu;
         }
 
         @Override
@@ -210,6 +197,15 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 Toast.makeText(getApplicationContext(), "El usuario no esta registrado en la base de datos!", Toast.LENGTH_SHORT).show();
             }else{
                 try {
+
+                    thisUsuario = UsuarioJSONparser.parse(o);
+                    if (thisUsuario != null){
+                        Intent intent = new Intent(getApplicationContext(), VistaHijos.class);
+                        intent.putExtra("usuarioStringJSON", o);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                    /*
                     //creamos el chirimbolo del JSon
                     //Gson gson = new GsonBuilder().create();
 
@@ -219,14 +215,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     user.setNombreUsuario(jsonobj.getString("nombre"));
                     user.setEmailUsuario(jsonobj.getString("correo"));
 
-                    ListadoHijos(o);
-                } catch (JSONException e) {
+                    //ListadoHijos(o);*/
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
             }
 
         }
+
+
 
     }
 
