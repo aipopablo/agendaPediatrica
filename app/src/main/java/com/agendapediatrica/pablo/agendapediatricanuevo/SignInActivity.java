@@ -28,6 +28,7 @@ import devazt.devazt.networking.HttpClient;
 import devazt.devazt.networking.OnHttpRequestComplete;
 import devazt.devazt.networking.Response;
 import models.Usuario;
+import util.HttpGestor;
 
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -41,9 +42,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     public static final String PORT = ":8080";
 
     public static final String POST_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitenceusuario.usuario/validar";
-    public static final String GET_HIJOS_USUARIO = "/AgendaPediatricaNuevo/webresources/persitencehijo.hijo/validar/";
-    public static final String GET_VACUNAS_HIJO = "/AgendaPediatricaNuevo/webresources/persitencevacuna./validar/";
-    public static final String GET_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitence.usuario/validar/";
+    public static final String GET_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persistenceusuario.usuario/usuario/";
+    public static final String GET_HIJOS_USUARIO = "/AgendaPediatricaNuevo/webresources/persistencehijos.hijos/listadohijos/";
+    public static final String GET_VACUNAS_HIJO = "/AgendaPediatricaNuevo/webresources/persistencevacunas.vacunas/listadoVacunas/";
     public static final int notificacionID = 123;
 
     private GoogleApiClient mGoogleApiClient;
@@ -173,6 +174,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         protected String doInBackground(String... params) {
             android.os.Debug.waitForDebugger();
 
+            String usu = HttpGestor.getData(params[0]);
+            return usu;
+
+            /* probaremos de otra manera
             HttpClient client = new HttpClient(new OnHttpRequestComplete() {
                 @Override
                 public String onComplete(Response status) {
@@ -188,6 +193,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             client.excecute(params[0]);
 
             return "";
+            */
         }
 
         @Override
@@ -205,7 +211,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             }else{
                 try {
                     //creamos el chirimbolo del JSon
-                    Gson gson = new GsonBuilder().create();
+                    //Gson gson = new GsonBuilder().create();
 
                     JSONObject jsonobj = new JSONObject(o);
 
