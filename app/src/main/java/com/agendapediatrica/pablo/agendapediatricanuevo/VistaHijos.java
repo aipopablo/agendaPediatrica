@@ -7,9 +7,9 @@ import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
@@ -18,13 +18,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 
 import org.json.JSONObject;
 
@@ -32,12 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adaptadores.HijosAdapter;
-import devazt.devazt.networking.HttpClient;
-import devazt.devazt.networking.OnHttpRequestComplete;
-import devazt.devazt.networking.Response;
 import jsonparser.HijosJSONparser;
 import models.Hijo;
 import models.Usuario;
+import util.HttpGestor;
 
 import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.GET_HIJOS_USUARIO;
 import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.PORT;
@@ -158,26 +151,9 @@ public class VistaHijos extends AppCompatActivity implements GoogleApiClient.OnC
 
         @Override
         protected String doInBackground(String... params) {
-            //String content = HttpManager.getData(params[0]);
-            //return content;
+            String usu = HttpGestor.getData(params[0]);
+            return usu;
 
-            android.os.Debug.waitForDebugger();
-
-            HttpClient client = new HttpClient(new OnHttpRequestComplete() {
-                @Override
-                public String onComplete(Response status) {
-                    String result = "";
-                    if(status.isSuccess()){
-                        result = status.getResult();
-                    }
-
-                    return result;
-                }
-            });
-
-            client.excecute(params[0]);
-
-            return "";
         }
 
         @Override

@@ -3,9 +3,9 @@ package com.agendapediatrica.pablo.agendapediatricanuevo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,16 +19,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import adaptadores.VacunasAdapter;
-import devazt.devazt.networking.HttpClient;
-import devazt.devazt.networking.OnHttpRequestComplete;
-import devazt.devazt.networking.Response;
 import jsonparser.VacunasJSONparser;
 import models.Hijo;
 import models.Vacuna;
+import util.HttpGestor;
 
 import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.GET_VACUNAS_HIJO;
 import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.PORT;
-import static cz.msebera.android.httpclient.HttpHeaders.SERVER;
+import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.SERVER;
+//import static cz.msebera.android.httpclient.HttpHeaders.SERVER;
 
 public class VistaVacunas extends AppCompatActivity {
     Button btnFiltrar;
@@ -153,26 +152,9 @@ public class VistaVacunas extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            //String content = HttpManager.getData(params[0]);
-            //return content;
+            String usu = HttpGestor.getData(params[0]);
+            return usu;
 
-            android.os.Debug.waitForDebugger();
-
-            HttpClient client = new HttpClient(new OnHttpRequestComplete() {
-                @Override
-                public String onComplete(Response status) {
-                    String result = "";
-                    if(status.isSuccess()){
-                        result = status.getResult();
-                    }
-
-                    return result;
-                }
-            });
-
-            client.excecute(params[0]);
-
-            return "";
         }
 
         @Override
