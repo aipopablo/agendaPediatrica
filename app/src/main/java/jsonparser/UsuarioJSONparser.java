@@ -18,7 +18,7 @@ public class UsuarioJSONparser {
             Usuario user = new Usuario();
 
             user.setIdUsuario(jsonObject.getInt("id"));
-            user.setNombreUsuario(jsonObject.getString("nombre"));
+            user.setNombreUsuario(jsonObject.getString("desusuario"));
             user.setEmailUsuario(jsonObject.getString("correo"));
 
             return user;

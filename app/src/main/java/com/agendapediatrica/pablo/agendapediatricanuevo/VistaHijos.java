@@ -46,9 +46,6 @@ import static com.agendapediatrica.pablo.agendapediatricanuevo.SignInActivity.no
 
 public class VistaHijos extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    private static final int INTERVALO = 2000; //2 segundos para salir
-    private long tiempoPrimerClick;
-
     Usuario usuario;//PADRE
     String usuarioStringJSON;
     List<Hijo> hijosList;
@@ -70,7 +67,7 @@ public class VistaHijos extends AppCompatActivity implements GoogleApiClient.OnC
             Usuario user = new Usuario();
 
             user.setIdUsuario(jsonObject.getInt("id"));
-            user.setNombreUsuario(jsonObject.getString("nombre"));
+            user.setNombreUsuario(jsonObject.getString("desusuario"));
             user.setEmailUsuario(jsonObject.getString("correo"));
 
         } catch (Exception e) {

@@ -2,9 +2,9 @@ package com.agendapediatrica.pablo.agendapediatricanuevo;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,21 +17,12 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-//para los objetos JSon
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import devazt.devazt.networking.HttpClient;
-import devazt.devazt.networking.OnHttpRequestComplete;
-import devazt.devazt.networking.Response;
 import jsonparser.UsuarioJSONparser;
 import models.Usuario;
 import util.HttpGestor;
 
-import static android.R.id.progress;
+//para los objetos JSon
 
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -39,12 +30,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
     //esta es la ip en casa
-    //private static final String SERVER = "192.168.1.60";
+    public static final String SERVER = "192.168.1.60";
     //esta es la ip en lo de pao
-    public static final String SERVER = "192.168.1.13";
+    //public static final String SERVER = "192.168.2.117";
     public static final String PORT = ":8080";
 
-    public static final String POST_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitenceusuario.usuario/validar";
+    //public static final String POST_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persitenceusuario.usuario/validar";
     public static final String GET_VALIDAR_USUARIO = "/AgendaPediatricaNuevo/webresources/persistenceusuario.usuario/usuario/";
     public static final String GET_HIJOS_USUARIO = "/AgendaPediatricaNuevo/webresources/persistencehijos.hijos/listadohijos/";
     public static final String GET_VACUNAS_HIJO = "/AgendaPediatricaNuevo/webresources/persistencevacunas.vacunas/listadoVacunas/";
@@ -159,7 +150,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     * del iusuario
     * */
     public  void  validarUsuario (String correo){
-        AsyncTaskUsuario task = new AsyncTaskUsuario();
+        AsyncTaskUsu task = new AsyncTaskUsu();
 
         url = "http://"+ SERVER + PORT + GET_VALIDAR_USUARIO + correo ;
 
@@ -174,8 +165,57 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
 
+    //generé de vuelta el asynctask de porquería
+    private class AsyncTaskUsu extends AsyncTask<String, String, String>{
+
+        @Override
+        protected void onPreExecute() {
+            try {
+                super.onPreExecute();
+
+            } catch (Exception e) {
+                String error = e.toString();
+            }
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String usu = HttpGestor.getData(strings[0]);
+
+            return usu;
+        }
 
 
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if (s == null){
+                //progress.dismiss();
+                Toast.makeText(getApplicationContext(), "El usuario no esta registrado en la base de datos!", Toast.LENGTH_SHORT).show();
+            }else{
+                try {
+
+                    thisUsuario = UsuarioJSONparser.parse(s);
+                    if (thisUsuario != null){
+                        Intent intent = new Intent(getApplicationContext(), VistaHijos.class);
+                        intent.putExtra("usuarioStringJSON", s);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+        }
+    }
+
+
+    //asynctask anterior, igual al otro, pero más bonito
+    /*
     private class AsyncTaskUsuario extends AsyncTask<String, String, String> {
         @Override
         protected void onPreExecute() {
@@ -205,17 +245,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
-                    /*
-                    //creamos el chirimbolo del JSon
-                    //Gson gson = new GsonBuilder().create();
 
-                    JSONObject jsonobj = new JSONObject(o);
-
-                    user.setIdUsuario(jsonobj.getInt("id"));
-                    user.setNombreUsuario(jsonobj.getString("nombre"));
-                    user.setEmailUsuario(jsonobj.getString("correo"));
-
-                    //ListadoHijos(o);*/
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -227,6 +257,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
 
     }
+    */
 
 
 }
